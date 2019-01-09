@@ -1,18 +1,20 @@
 package com.bignerdranch.rmaca.geoquiz;
 
 import android.app.Activity;
+import android.media.Image;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
-import org.w3c.dom.Text;
 
 public class QuizActivity extends Activity {
 
     private Button mTrueButton;
     private Button mFalseButton;
-    private Button mNextButton;
+    private ImageButton mNextButton;
+    private ImageButton mPrevButton;
     private TextView mQuestionTextView;
     //Creating this here to keep things simple for now
     private TrueFalse[] mQuestionBank = new TrueFalse[] {
@@ -31,6 +33,12 @@ public class QuizActivity extends Activity {
         setContentView(R.layout.activity_quiz);
 
         mQuestionTextView = findViewById(R.id.question_text_view);
+        mQuestionTextView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                nextQuestion();
+            }
+        });
 
         mTrueButton = findViewById(R.id.true_button);
         mTrueButton.setOnClickListener(new View.OnClickListener() {
@@ -52,8 +60,15 @@ public class QuizActivity extends Activity {
         mNextButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mCurrentIndex = (mCurrentIndex + 1) % mQuestionBank.length;
-                updateQuestion();
+                nextQuestion();
+            }
+        });
+
+        mPrevButton = findViewById(R.id.previous_button);
+        mPrevButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                prevQuestion();
             }
         });
 
@@ -61,9 +76,21 @@ public class QuizActivity extends Activity {
 
     }
 
+    private void prevQuestion() {
+        if (mCurrentIndex > 0) {
+            mCurrentIndex = (mCurrentIndex - 1) % mQuestionBank.length;
+            updateQuestion();
+        }
+    }
+
     private void updateQuestion() {
         int question = mQuestionBank[mCurrentIndex].getQuestion();
         mQuestionTextView.setText(question);
+    }
+
+    private void nextQuestion() {
+        mCurrentIndex = (mCurrentIndex + 1) % mQuestionBank.length;
+        updateQuestion();
     }
 
     private void checkAnswer(boolean userPressedTrue) {
